@@ -1,0 +1,21 @@
+.confirm-seed-container {
+    width: 100%;
+    min-width: 100vw;
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-around;
+}
+
+.confirm-seed-msg {
+    font-size: 30px;
+    margin-bottom: 5px;
+}
+
+.confirm-seed-actions-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+}

@@ -1,24 +1,53 @@
 import React from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import GetStarted from './pages/GetStarted/GetStarted';
+import Login from './pages/Login/Login';
+import CreatePassword from './pages/CreatePassword/CreatePassword';
+import Dashboard from './pages/Dashboard/Dashboard';
+import NewSeed from './pages/NewSeed/NewSeed';
+import ConfirmSeed from './pages/ConfirmSeed/ConfirmSeed';
+import { redirect  } from './utils/auth';
 import './App.css';
 
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app-container">
+        <Router>
+          <Routes>  
+
+            <Route 
+              path="/"
+              element={redirect("/") ? <Navigate to={redirect("/")} /> : <Dashboard />} 
+            />
+
+            <Route 
+              path="/login" 
+              element={redirect("/login") ? <Navigate to={redirect("/login")} /> : <Login />} 
+            />
+
+            <Route 
+              path="/welcome" 
+              element={redirect("/welcome") ? <Navigate to={redirect("/welcome")} /> : <GetStarted />} 
+            />
+
+            <Route 
+              path="/password" 
+              element={redirect("/password") ? <Navigate to={redirect("/password")} /> : <CreatePassword />} 
+            />
+
+            <Route 
+              path="/seed/new" 
+              element={redirect("/seed/new") ? <Navigate to={redirect("/seed/new")} /> : <NewSeed />} 
+            />
+
+            <Route 
+              path="/seed/confirm" 
+              element={redirect("/seed/confirm") ? <Navigate to={redirect("/seed/confirm")} /> : <ConfirmSeed />} 
+            />
+          
+          </Routes>
+        </Router>
     </div>
   );
 }
