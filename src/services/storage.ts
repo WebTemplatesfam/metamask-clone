@@ -104,8 +104,7 @@ export function setAccountName(name: string, address: string) {
     localStorage.setItem('accountNames', JSON.stringify(accountNameMap));
 }
 
-export function setAccount(account: Partial<HDNode> | any) {
-    account.nonce=0;
+export function setAccount(account: Partial<HDNode>) {
     const accountEnc = encryptData(account);
     const accounts = getAccounts();
     accounts.push(accountEnc);

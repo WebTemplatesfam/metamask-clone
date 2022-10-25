@@ -1,0 +1,23 @@
+.import-wallet-container {
+    width: 100%;
+    min-width: 100vw;
+    /* margin-top: 50px; */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-around;
+}
+
+.import-wallet-msg {
+    font-size: 30px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.import-wallet-actions-div {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+}

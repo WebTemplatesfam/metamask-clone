@@ -16,10 +16,10 @@ function CreatePassword(props: any) {
 
     const [pwd, setPwd] = useState('');
     const [confirmPwd, setConfirmPwd] = useState('');
-    const [error,SetError]=useState('');
+    const [error,setError]=useState('');
 
     const handlePwdChange = (e: React.ChangeEvent<HTMLInputElement>) => { 
-        SetError('');
+        setError('');
         e.preventDefault();
         setPwd(e.target.value);
     }
@@ -44,11 +44,11 @@ function CreatePassword(props: any) {
 
     const setPasswordAndCreateAccount = (e: any) => {
         if(!pwd.length || pwd.length < 8) {
-            SetError('password less than 8 chars');
+            setError('password less than 8 chars');
             return;
         }
         if (pwd!==confirmPwd) {
-            SetError('password inputs don\'t match');
+            setError('password inputs don\'t match');
             return;
         }
         const hash = SHA256Hash(pwd);

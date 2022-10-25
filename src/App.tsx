@@ -6,6 +6,7 @@ import CreatePassword from './pages/CreatePassword/CreatePassword';
 import Dashboard from './pages/Dashboard/Dashboard';
 import NewSeed from './pages/NewSeed/NewSeed';
 import ConfirmSeed from './pages/ConfirmSeed/ConfirmSeed';
+import ImportWallet from './pages/ImportWallet/ImportWallet';
 import { redirect  } from './utils/auth';
 import './App.css';
 
@@ -44,6 +45,11 @@ function App() {
             <Route 
               path="/seed/confirm" 
               element={redirect("/seed/confirm") ? <Navigate to={redirect("/seed/confirm")} /> : <ConfirmSeed />} 
+            />
+
+            <Route 
+              path="/wallet/import" 
+              element={redirect("/wallet/import") ? <Navigate to={redirect("/wallet/import")} /> : <ImportWallet />} 
             />
           
           </Routes>

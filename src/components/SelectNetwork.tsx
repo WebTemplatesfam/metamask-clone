@@ -23,7 +23,7 @@ function SelectNetwork(props: any) {
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={props.chainID}
-                defaultValue={NETWORK_CHAIN_ID.RINKEBY}
+                defaultValue={NETWORK_CHAIN_ID.GOERLI}
                 label="Network"
                 onChange={handleChainIDChange}
                 sx={{height: 42}}

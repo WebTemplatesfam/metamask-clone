@@ -1,10 +1,6 @@
 import { ethers, BigNumber } from 'ethers';
-import { randomBytes, entropyToMnemonic, HDNode, computeAddress, computePublicKey, formatEther, formatUnits, isAddress, parseUnits} from 'ethers/lib/utils';
-const { REACT_APP_RINKEBY_PROVIDER_URL, REACT_APP_MAINNET_PROVIDER_URL } = process.env;
-
-export interface IAccount extends HDNode {
-  nonce: number;
-}
+import { randomBytes, entropyToMnemonic, HDNode, computeAddress, computePublicKey, formatEther, formatUnits, isAddress, isValidMnemonic, parseUnits} from 'ethers/lib/utils';
+const { REACT_APP_RINKEBY_PROVIDER_URL, REACT_APP_GOERLI_PROVIDER_URL, REACT_APP_MAINNET_PROVIDER_URL } = process.env;
 
 export function createHDRootNodefromRandom(): HDNode {
     const ENT = randomBytes(16);
@@ -25,20 +21,18 @@ export function createHDRootNodeFromMnemonic(mnemonic: string, passphrase: strin
     return HDNode.fromMnemonic(mnemonic, passphrase);
 }
 
-export function createAccountFromHDRootNode(HDRoot: HDNode, accountIndex: number): IAccount {
+export function createAccountFromHDRootNode(HDRoot: HDNode, accountIndex: number): HDNode {
     const account: HDNode | any = HDRoot.derivePath(`m/44'/60'/0'/0/${accountIndex}`);
-    account.nonce=0;
     return account;
 }
 
-export function createAccountFromPrivateKey(privateKey: string): Partial<IAccount>  {
+export function createAccountFromPrivateKey(privateKey: string): Partial<HDNode>  {
   const publicKey = computePublicKey(privateKey, true);
   const address = computeAddress(publicKey);
   const account = {
     privateKey,
     publicKey,
     address,
-    nonce: 0,
     isImported: true //indicates account is imported to wallet using private key and is not generated from master seed
   };
   return account;
@@ -63,7 +57,10 @@ export function getNetworkByChainID(chainID: number) {
   
 export function setWeb3Provider(chainID: number) {
   try {
-    const PROVIDER_URL = chainID===4 ? REACT_APP_RINKEBY_PROVIDER_URL : REACT_APP_MAINNET_PROVIDER_URL;
+    // const PROVIDER_URL = chainID===4 ? REACT_APP_RINKEBY_PROVIDER_URL : REACT_APP_MAINNET_PROVIDER_URL;
+    const PROVIDER_URL = chainID===5 ? REACT_APP_GOERLI_PROVIDER_URL : REACT_APP_MAINNET_PROVIDER_URL;
+    
+    
     const web3Provider: ethers.providers.JsonRpcProvider = new ethers.providers.JsonRpcProvider(PROVIDER_URL);
     if(!web3Provider) throw new Error('No web3 provider found');
     return web3Provider;
@@ -142,50 +139,65 @@ export function isValidEthAddress(address: string) {
   return isValid;
 }
 
-export async function estimateTxnFee(provider: ethers.providers.JsonRpcProvider) {
-  if(!provider) throw new Error('provider not found');
-  const latest = await provider.getBlock('latest');
-  const { gasUsed, gasLimit, baseFeePerGas: prevBaseFeePerGas } = latest;
-  if(!gasUsed || !gasLimit || !prevBaseFeePerGas) throw new Error('something went wrong in fetching latest block');
-  /**
-   *  base_fee_n = (base_fee_n-1) * (1 + 0.125*[gas_used/gas_opt - 1])
-   * 
-   *  base_fee = prev_base_fee * penalty_factor
-   * 
-   *  penalty_factor = 1 + penalty when gas_used > gas_opt (add penalty)
-   *                 = 1 - penalty when gas_used < gas_opt (sub penalty)
-   * 
-   *  penalty = 12.5 % [ (gas_used/gas_opt) - 1 ] when gas_used > gas_opt 
-   *          = 12.5 % [ 1 - (gas_used/gas_opt) ] when gas_used < gas_opt 
-   * 
-   *  max_priority_fee (1.5 - 2 - 2.5) for (slow - mid -fast)
-   * 
-   *  max_fee = ( 2 * base_fee +  max_priority_fee )
-  */
-   const gasOpt = gasLimit.div(2);
-   const addPenalty = gasUsed.gt(gasOpt) ? true : false;
-   const penalty = gasUsed.gt(gasOpt) ? gasUsed.div(gasOpt).sub(1).mul(125).div(1000) : BigNumber.from(1).sub(gasUsed.div(gasOpt)).mul(125).div(1000);
-   const penaltyFactor = addPenalty ? BigNumber.from(1).add(penalty) : BigNumber.from(1).sub(penalty);
-   const baseFeePerGas = prevBaseFeePerGas.mul(penaltyFactor); 
+export function isValidMnemonicSeed(seed: string) {
+  if(!seed) return false;
+  const isValid = isValidMnemonic(seed);
+  return isValid;
+}
+
+export async function estimateBaseGasFee(provider: ethers.providers.JsonRpcProvider) {
+    if(!provider) throw new Error('provider not found');
+    const latest = await provider.getBlock('latest');
+    const { gasUsed, gasLimit, baseFeePerGas: prevBaseFeePerGas } = latest;
+    if(!gasUsed || !gasLimit || !prevBaseFeePerGas) throw new Error('something went wrong in fetching latest block');
+    /**
+     *  base_fee_n = (base_fee_n-1) * (1 + 0.125*[gas_used/gas_opt - 1])
+     * 
+     *  base_fee = prev_base_fee * penalty_factor
+     * 
+     *  penalty_factor = 1 + penalty when gas_used > gas_opt (add penalty)
+     *                 = 1 - penalty when gas_used < gas_opt (sub penalty)
+     * 
+     *  penalty = 12.5 % [ (gas_used/gas_opt) - 1 ] when gas_used > gas_opt 
+     *          = 12.5 % [ 1 - (gas_used/gas_opt) ] when gas_used < gas_opt 
+     * 
+     *  max_priority_fee (1.5 - 2 - 2.5) for (slow - mid -fast)
+     * 
+     *  max_fee = ( 2 * base_fee +  max_priority_fee )
+    */
+    const gasOpt = gasLimit.div(2);
+    const addPenalty = gasUsed.gt(gasOpt) ? true : false;
+    const penalty = gasUsed.gt(gasOpt) ? gasUsed.div(gasOpt).sub(1).mul(125).div(1000) : BigNumber.from(1).sub(gasUsed.div(gasOpt)).mul(125).div(1000);
+    const penaltyFactor = addPenalty ? BigNumber.from(1).add(penalty) : BigNumber.from(1).sub(penalty);
+    const baseFeePerGas = prevBaseFeePerGas.mul(penaltyFactor); 
+    return baseFeePerGas;
+}
+
+export function estimateTxnFee(baseFeePerGas: BigNumber) {
+  if(!baseFeePerGas) baseFeePerGas = BigNumber.from('0');
+  const maxPriorityFeePerGas = {
+    slow: BigNumber.from('1500000000'),
+    medium: BigNumber.from('2000000000'),
+    fast: BigNumber.from('2500000000')
+  };
   const feeInfo = {
     slow: {
       baseFeePerGas,
-      maxPriorityFeePerGas: BigNumber.from('1500000000'),
-      estimatedFeePerGas: baseFeePerGas.add(BigNumber.from('1500000000')),
-      maxFeePerGas: baseFeePerGas.mul(2).add(BigNumber.from('1500000000'))
+      maxPriorityFeePerGas: maxPriorityFeePerGas.slow,
+      estimatedFeePerGas: baseFeePerGas.add(maxPriorityFeePerGas.slow),
+      maxFeePerGas: baseFeePerGas.mul(2).add(maxPriorityFeePerGas.slow)
     },
     medium: {
       baseFeePerGas,
-      maxPriorityFeePerGas: BigNumber.from('200000000'),
-      estimatedFeePerGas: baseFeePerGas.add(BigNumber.from('2000000000')),
-      maxFeePerGas: baseFeePerGas.mul(2).add(BigNumber.from('2000000000'))
+      maxPriorityFeePerGas: maxPriorityFeePerGas.medium,
+      estimatedFeePerGas: baseFeePerGas.add(maxPriorityFeePerGas.medium),
+      maxFeePerGas: baseFeePerGas.mul(2).add(maxPriorityFeePerGas.medium)
     },
     fast: {
       baseFeePerGas,
-      maxPriorityFeePerGas: BigNumber.from('25000000'),
-      estimatedFeePerGas: baseFeePerGas.add(BigNumber.from('250000000')),
-      maxFeePerGas: baseFeePerGas.mul(2).add(BigNumber.from('250000000'))
-
+      maxPriorityFeePerGas: maxPriorityFeePerGas.fast,
+      estimatedFeePerGas: baseFeePerGas.add(maxPriorityFeePerGas.fast),
+      maxFeePerGas: baseFeePerGas.mul(2).add(maxPriorityFeePerGas.fast)
     }
   }
   return feeInfo;

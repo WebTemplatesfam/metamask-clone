@@ -24,16 +24,11 @@ export function hasMnemonic() {
 
 
 export function redirect(startPath: string) {
-    let redirectUrl: string ='';
+    let redirectUrl ='';
     if(hasLoggedIn()) redirectUrl="/";
     else if(hasPassword()) redirectUrl="/login";
     else if(["/", "/login"].includes(startPath)) redirectUrl="/welcome";
     else redirectUrl=startPath;
-    if(startPath==="/") {
-        console.log(hasLoggedIn());
-        console.log(hasPassword());
-    }
     if(redirectUrl===startPath) return '';
     return redirectUrl;
 }
-

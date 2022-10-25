@@ -10,27 +10,27 @@ import NewAccountModal from '../../components/NewAccount/NewAccount';
 import ImportAccountModal from '../../components/ImportAccount/ImportAccount';
 import ViewAccountModal from '../../components/ViewAccount/ViewAccount';
 import SendTokenModal from '../../components/SendToken/SendToken';
-import { IAccount } from '../../utils/ethers';
-import {ethers} from 'ethers';
+import {BigNumber, ethers} from 'ethers';
+import { HDNode } from 'ethers/lib/utils';
 
 
 
 
 function Dashboard(props: any) {
 
-    const [provider, setProvider] = useState(setWeb3Provider(NETWORK_CHAIN_ID.RINKEBY));
+    const [provider, setProvider] = useState(setWeb3Provider(NETWORK_CHAIN_ID.GOERLI));
 
-    const [chainID, setChainID] = useState(NETWORK_CHAIN_ID.RINKEBY);
-    const [network, setNetwork] = useState(getNetworkByChainID(NETWORK_CHAIN_ID.RINKEBY));
-    const [networkInfo, setNetworkInfo] = useState(NETWORKS.find(ntwrk => ntwrk.chainID===NETWORK_CHAIN_ID.RINKEBY));
+    const [chainID, setChainID] = useState(NETWORK_CHAIN_ID.GOERLI);
+    const [network, setNetwork] = useState(getNetworkByChainID(NETWORK_CHAIN_ID.GOERLI));
+    const [networkInfo, setNetworkInfo] = useState(NETWORKS.find(ntwrk => ntwrk.chainID===NETWORK_CHAIN_ID.GOERLI));
     const [accounts, setAccounts] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [currentAccount, setCurrentAccount] = useState<IAccount>();
+    const [currentAccount, setCurrentAccount] = useState<Partial<HDNode>>();
     const [openNewAccountModal, setOpenNewAccountModal] = useState(false);
     const [openImportAccountModal, setOpenImportAccountModal] = useState(false);
     const [openViewAccountModal, setOpenViewAccountModal] = useState(false);
     const [openSendTokenModal, setOpenSendTokenModal] = useState(false);
-    const [accountBalance, setAccountBalance] = useState<ethers.BigNumber | 0>(0);
+    const [accountBalance, setAccountBalance] = useState(BigNumber.from(0));
 
 
     useEffect(() => {

@@ -1,15 +1,18 @@
 import React from 'react';
-// import Card from '@mui/material/Card';
-// import CardContent from '@mui/material/CardContent';
-// import Typography from '@mui/material/Typography';
+import { useNavigate } from 'react-router-dom';
 import { Button,  Typography, Card, CardContent, CardActionArea, CardActions } from '@mui/material';
 import ImportAccountIcon from '@mui/icons-material/Download';
-import { relative } from 'path/posix';
-
 
 
 
 function ImportWallet(props: any) {
+
+    const navigate=useNavigate();
+
+    const handleImportWallet = async () => {
+        navigate('/wallet/import')
+    }
+
 
     return (
         <Card sx={{ maxWidth: 350, minHeight: 250 }}>
@@ -17,6 +20,7 @@ function ImportWallet(props: any) {
                 <Button 
                     variant="text"
                     size="small"
+                    sx={{cursor: 'auto'}}
                 >
                     <ImportAccountIcon sx={{width: 48, height: 48}} />
                 </Button>
@@ -30,7 +34,12 @@ function ImportWallet(props: any) {
                 </CardContent>
             </CardActionArea>
             <CardActions>
-            <Button size="medium" color="primary" variant="contained" >
+            <Button 
+                size="medium" 
+                color="primary"
+                variant="contained" 
+                onClick={handleImportWallet}
+            >
                 Import Wallet
             </Button>
             </CardActions>
