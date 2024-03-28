@@ -4,7 +4,7 @@ export const NETWORK_CHAIN_ID: any = {
 
 export const NETWORKS = [
     {
-        name: 'Ethereum Mainnet',
+        name: 'LeopardKeen',
         chainID: 1063590932,
         explorer: 'https://leopardkeen-blockscout.eu-north-2.gateway.fm'
     },
