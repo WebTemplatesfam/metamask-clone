@@ -10,7 +10,7 @@ function LogoDiv(props: any) {
                 alt="dbz_icon"
                 className="logo-icon"
             />
-            <div id="title">Z-Wallet</div>
+            <div id="title">Keen-Wallet</div>
         </div>
     );
 }
