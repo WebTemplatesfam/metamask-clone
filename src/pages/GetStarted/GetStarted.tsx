@@ -11,7 +11,7 @@ function GetStarted(props: any) {
         <div>
         <LogoDiv />
         <div  className="get-started-container">
-            <div className="welcome-msg">New to Z-Wallet ?</div>
+            <div className="welcome-msg">New to Keen-Wallet ?</div>
             <div className="welcome-actions-div">
                 <ImportWallet {...props} />
                 <CreateWallet {...props} />
