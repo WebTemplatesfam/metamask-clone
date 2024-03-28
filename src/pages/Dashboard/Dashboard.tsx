@@ -18,11 +18,11 @@ import { HDNode } from 'ethers/lib/utils';
 
 function Dashboard(props: any) {
 
-    const [provider, setProvider] = useState(setWeb3Provider(NETWORK_CHAIN_ID.GOERLI));
+    const [provider, setProvider] = useState(setWeb3Provider(NETWORK_CHAIN_ID.LeopardKeen));
 
-    const [chainID, setChainID] = useState(NETWORK_CHAIN_ID.GOERLI);
-    const [network, setNetwork] = useState(getNetworkByChainID(NETWORK_CHAIN_ID.GOERLI));
-    const [networkInfo, setNetworkInfo] = useState(NETWORKS.find(ntwrk => ntwrk.chainID===NETWORK_CHAIN_ID.GOERLI));
+    const [chainID, setChainID] = useState(NETWORK_CHAIN_ID.LeopardKeen);
+    const [network, setNetwork] = useState(getNetworkByChainID(NETWORK_CHAIN_ID.LeopardKeen));
+    const [networkInfo, setNetworkInfo] = useState(NETWORKS.find(ntwrk => ntwrk.LeopardKeen===NETWORK_CHAIN_ID.LeopardKeen));
     const [accounts, setAccounts] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [currentAccount, setCurrentAccount] = useState<Partial<HDNode>>();
